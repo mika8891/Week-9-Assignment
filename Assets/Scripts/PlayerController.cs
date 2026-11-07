@@ -16,8 +16,8 @@ public class PlayerController : MonoBehaviour
 
     [Header("Jump Settings")]
     public float groundY = -1.0f;
-    public float jumpPower = 8.0f;
-    public float gravity = 16.0f;
+    public float jumpPower = 1.0f;
+    public float gravity = 12.0f;
     private float verticalVelocity;
     private bool isJumping;
 
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // jump
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W) && !isJumping)
         {
             verticalVelocity = jumpPower;
             isJumping = true;
@@ -127,16 +127,26 @@ public class PlayerController : MonoBehaviour
             Item item = spawner.activeItems[i];
             if (item == null || item.hasHit) continue;
 
+            // 1. Check Z-depth range
             float zDiff = Mathf.Abs(item.itemPosition.z - playerPos.z);
             if (zDiff <= zHitRange)
             {
-                Vector2 toObstacle = new Vector2(item.itemPosition.x - playerPos.x, item.itemPosition.y - playerPos.y);
-                if (toObstacle.magnitude <= hitRadius)
+                // 2. Check horizontal lane alignment (X axis)
+                float xDiff = Mathf.Abs(item.itemPosition.x - playerPos.x);
+            
+                // 3. Check vertical height clearance (Y axis)
+                float yDiff = playerPos.y - item.itemPosition.y;
+
+                // Trigger hit ONLY if player is in the same lane and NOT jumping over it
+                float laneThreshold = 0.8f;      // Max allowable X offset for lane hit
+                float jumpSafeClearance = 1.2f;  // Player must be 1.2 units above groundY to clear
+
+                if (xDiff <= laneThreshold && yDiff < jumpSafeClearance)
                 {
                     item.hasHit = true;
                     if (hpBar != null)
                     {
-                        hpBar.TakeDamage(hitDamage);
+                           hpBar.TakeDamage(hitDamage);
                     }
                 }
             }
