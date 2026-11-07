@@ -127,19 +127,15 @@ public class PlayerController : MonoBehaviour
             Item item = spawner.activeItems[i];
             if (item == null || item.hasHit) continue;
 
-            // 1. Check Z-depth range
             float zDiff = Mathf.Abs(item.itemPosition.z - playerPos.z);
             if (zDiff <= zHitRange)
             {
-                // 2. Check horizontal lane alignment (X axis)
                 float xDiff = Mathf.Abs(item.itemPosition.x - playerPos.x);
             
-                // 3. Check vertical height clearance (Y axis)
                 float yDiff = playerPos.y - item.itemPosition.y;
 
-                // Trigger hit ONLY if player is in the same lane and NOT jumping over it
-                float laneThreshold = 0.8f;      // Max allowable X offset for lane hit
-                float jumpSafeClearance = 1.2f;  // Player must be 1.2 units above groundY to clear
+                float laneThreshold = 0.8f;      
+                float jumpSafeClearance = 1.2f;  
 
                 if (xDiff <= laneThreshold && yDiff < jumpSafeClearance)
                 {
