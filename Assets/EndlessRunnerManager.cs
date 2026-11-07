@@ -238,10 +238,6 @@ public class EndlessRunnerManager : MonoBehaviour
     {
         if (playerSpriteRenderer == null) return;
 
-        if (hitVisualTimer > 0.0f && playerHitSprite != null)
-        {
-            playerSpriteRenderer.sprite = playerHitSprite;
-        }
         else if (isJumping && playerJumpSprite != null)
         {
             playerSpriteRenderer.sprite = playerJumpSprite;
@@ -253,6 +249,15 @@ public class EndlessRunnerManager : MonoBehaviour
         else if (playerIdleSprite != null)
         {
             playerSpriteRenderer.sprite = playerIdleSprite;
+        }
+
+        if (hitVisualTimer > 0.0f)
+        {
+            playerSpriteRenderer.color = Color.red;
+        }
+        else
+        {
+            playerSpriteRenderer.color = Color.white;
         }
     }
 }
